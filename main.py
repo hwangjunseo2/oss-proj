@@ -17,13 +17,18 @@ def load_high_score():
     """HIGHSCORE_FILE 에서 최고 점수를 읽어 돌려준다."""
     # TODO(F5): 파일에서 최고 점수를 읽어 int 로 반환할 것.
     #           파일이 없거나 내용이 숫자가 아니면 0 을 반환할 것.
-    return 0
+    try:
+        with open(HIGHSCORE_FILE, encoding="utf-8") as f:
+            return int(f.read().strip())
+    except (OSError, ValueError):
+        return 0  
 
 
 def save_high_score(score):
     """최고 점수를 HIGHSCORE_FILE 에 저장한다."""
     # TODO(F5): score 를 파일에 저장할 것. (다음 실행 때 load_high_score() 로 읽을 수 있게)
-    pass
+    with open(HIGHSCORE_FILE, "w", encoding="utf-8") as f:
+        f.write(str(score))
 
 
 class Game:
@@ -75,6 +80,8 @@ class Game:
                     bullet = self.player.shoot()
                     self.bullets.add(bullet)
                     self.all_sprites.add(bullet)
+                elif event.key == pygame.K_r and self.game_over:
+                    self.reset()
                 # TODO(F2): 스페이스 키를 누르면 self.player.shoot() 으로 총알을 만들어
                 #           self.bullets 와 self.all_sprites 두 그룹에 넣을 것. (게임 오버 중에는 쏘지 않게)
                 # TODO(F5): 게임 오버 상태에서 R 키를 누르면 self.reset() 으로 새 판을 시작할 것.
@@ -126,6 +133,9 @@ class Game:
         """게임 오버 처리."""
         self.game_over = True
         # TODO(F5): 이번 점수가 최고 점수보다 높으면 self.high_score 를 바꾸고 save_high_score() 로 저장할 것.
+        if self.score > self.high_score:
+            self.high_score = self.score
+            save_high_score(self.high_score)
 
     # ---------------- 그리기 ----------------
     def draw_text(self, text, font, color, **position):
@@ -167,6 +177,8 @@ class Game:
         # TODO(F4): 화면 가운데에 "GAME OVER" 와 이번 판 점수를 표시할 것.
         # TODO(F5): 최고 점수("HIGH SCORE: 300")와 재시작 안내("Press R to restart")도 표시할 것.
         cx, cy = WIDTH // 2, HEIGHT // 2
+        self.draw_text(f"HIGH SCORE: {self.high_score}", self.font, YELLOW, center=(cx, cy + 40))
+        self.draw_text("Press R to restart", self.font, WHITE, center=(cx, cy + 100))
         self.draw_text("GAME OVER", self.big_font, RED, center=(cx, cy - 60))
         self.draw_text(f"SCORE: {self.score}", self.font, WHITE, center=(cx, cy))
 
