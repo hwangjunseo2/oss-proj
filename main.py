@@ -80,6 +80,8 @@ class Game:
                     bullet = self.player.shoot()
                     self.bullets.add(bullet)
                     self.all_sprites.add(bullet)
+                elif event.key == pygame.K_r and self.game_over:
+                    self.reset()
                 # TODO(F2): 스페이스 키를 누르면 self.player.shoot() 으로 총알을 만들어
                 #           self.bullets 와 self.all_sprites 두 그룹에 넣을 것. (게임 오버 중에는 쏘지 않게)
                 # TODO(F5): 게임 오버 상태에서 R 키를 누르면 self.reset() 으로 새 판을 시작할 것.
@@ -174,10 +176,9 @@ class Game:
         """게임 오버 화면. self.game_over 가 True 일 때 draw() 가 부른다."""
         # TODO(F4): 화면 가운데에 "GAME OVER" 와 이번 판 점수를 표시할 것.
         # TODO(F5): 최고 점수("HIGH SCORE: 300")와 재시작 안내("Press R to restart")도 표시할 것.
+        cx, cy = WIDTH // 2, HEIGHT // 2
         self.draw_text(f"HIGH SCORE: {self.high_score}", self.font, YELLOW, center=(cx, cy + 40))
         self.draw_text("Press R to restart", self.font, WHITE, center=(cx, cy + 100))
-
-        cx, cy = WIDTH // 2, HEIGHT // 2
         self.draw_text("GAME OVER", self.big_font, RED, center=(cx, cy - 60))
         self.draw_text(f"SCORE: {self.score}", self.font, WHITE, center=(cx, cy))
 
